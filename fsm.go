@@ -18,7 +18,7 @@ type Fsm struct {
 	actions map[string]action
 }
 
-// isValideState is use for now is a state is part of the possible state of the fsm
+// isValideState is used to know if a state is part of the fsm possible states
 func isValideState(states []string, state string) bool {
 	for _, val := range states {
 		if val == state {
