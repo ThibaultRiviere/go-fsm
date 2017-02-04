@@ -19,11 +19,11 @@ type transition struct {
 
 // AddTransition will add to the fsm a new transition.
 func (fsm *Fsm) AddTransition(name string, from string, to string, handler func()) error {
-	if IsValideState(fsm.states, from) == false {
+	if isValideState(fsm.states, from) == false {
 		return errors.New("State from is not part of the states")
 	}
 
-	if IsValideState(fsm.states, to) == false {
+	if isValideState(fsm.states, to) == false {
 		return errors.New("State to is not part of the states")
 	}
 
@@ -35,15 +35,15 @@ func (fsm *Fsm) AddTransition(name string, from string, to string, handler func(
 // HandleTransition will check if the transition is possible.
 // Check if the current state is the state require, call the handler and
 // change the current state to the new state.
-func (fsm *Fsm) HandleTransition(name string) (error, string) {
+func (fsm *Fsm) HandleTransition(name string) (string, error) {
 	transition, exist := fsm.transitions[name]
 	if exist == false {
-		return errors.New("Event doesn't exist"), fsm.current
+		return fsm.current, errors.New("Event doesn't exist")
 	}
 	if transition.from == fsm.current {
 		transition.handler()
 		fsm.current = transition.to
-		return nil, fsm.current
+		return fsm.current, nil
 	}
-	return errors.New("Bad state refuse event"), fsm.current
+	return fsm.current, errors.New("Bad state refuse event")
 }
