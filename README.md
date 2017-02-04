@@ -1,0 +1,2 @@
+# go-fsm
+FSM library
