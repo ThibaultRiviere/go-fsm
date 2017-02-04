@@ -43,7 +43,7 @@ func main() {
     })
 ```
 
-### Handler a transition
+### Handle a transition
 
 ```go
     currentState, err := door.HandleTransition("unlock door")
@@ -67,7 +67,7 @@ In case where the current state is not lock then the transition ```unlock door``
     })
 ```
 
-### Handler an action
+### Handle an action
 
 ```go
     err := door.HandleAction("travers door")
