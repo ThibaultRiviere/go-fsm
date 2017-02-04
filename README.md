@@ -50,7 +50,7 @@ func main() {
     if err != nil {
         fmt.Println("Couldn't unlock the door because the state is ", currentState)        
     } else {
-        fmt.Prinln("The door state now is ", currentState)        
+        fmt.Println("The door state now is ", currentState)        
     }
 ```
 
@@ -63,7 +63,7 @@ In case where the current state is not lock then the transition ```unlock door``
 ```go
     // action name, state needed, handler
     door.AddAction("travers door", "open", func() {
-        fmt.Prinln("Someone go through the door")    
+        fmt.Println("Someone go through the door")    
     })
 ```
 
@@ -72,9 +72,9 @@ In case where the current state is not lock then the transition ```unlock door``
 ```go
     err := door.HandleAction("travers door")
     if err != nil {
-        fmt.Prinln("Impossible to travers the door"
+        fmt.Println("Impossible to travers the door"
     } else {
-        fmt.Prinln("New people in the room")        
+        fmt.Println("New people in the room")        
     }
 ```
 If the current state of the door is ```open```, then it's possible to go through the door and enter in the room.
