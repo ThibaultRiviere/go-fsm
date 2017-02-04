@@ -18,8 +18,8 @@ type Fsm struct {
 	actions map[string]action
 }
 
-// IsValideState is use for now is a state is part of the possible state of the fsm
-func IsValideState(states []string, state string) bool {
+// isValideState is use for now is a state is part of the possible state of the fsm
+func isValideState(states []string, state string) bool {
 	for _, val := range states {
 		if val == state {
 			return true
@@ -30,14 +30,13 @@ func IsValideState(states []string, state string) bool {
 
 // NewFsm will initialize all the properties of the fsm.
 // Check if the current state is part of the possible states
-func NewFsm(states []string, current string) (error, *Fsm) {
-
-	if IsValideState(states, current) == false {
-		return errors.New("Default state is not part of the states"), nil
+func NewFsm(states []string, current string) (*Fsm, error) {
+	if isValideState(states, current) == false {
+		return nil, errors.New("Default state is not part of the states")
 	}
 	transitions := make(map[string]transition)
 	actions := make(map[string]action)
-	return nil, &Fsm{current, states, transitions, actions}
+	return &Fsm{current, states, transitions, actions}, nil
 }
 
 // GetState return the current state of the fsm
