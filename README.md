@@ -1,5 +1,5 @@
 # go-fsm
-FSM library
+FSM library to create a [finite-state-machine](https://en.wikipedia.org/wiki/Finite-state_machine)
 
 ## Documentation
 
