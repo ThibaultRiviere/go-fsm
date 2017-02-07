@@ -12,7 +12,7 @@ var (
 
 func _testFsm(name string, states []string, current string, errExpected error) {
 	Convey(name, func() {
-		_, err := NewFsm(states, current)
+		_, err := New(states, current)
 		if err != nil {
 			So(err.Error(), ShouldEqual, errExpected.Error())
 		} else {
@@ -35,7 +35,7 @@ func TestFsm(t *testing.T) {
 
 func _testGetState(name string, states []string, current string) {
 	Convey(name, func() {
-		fsm, err := NewFsm(states, current)
+		fsm, err := New(states, current)
 		So(err, ShouldEqual, nil)
 		So(fsm.GetState(), ShouldEqual, current)
 	})

@@ -28,9 +28,9 @@ func isValideState(states []string, state string) bool {
 	return false
 }
 
-// NewFsm will initialize all the properties of the fsm.
+// New will initialize all the properties of the fsm.
 // Check if the current state is part of the possible states
-func NewFsm(states []string, current string) (*Fsm, error) {
+func New(states []string, current string) (*Fsm, error) {
 	if isValideState(states, current) == false {
 		return nil, errors.New("Default state is not part of the states")
 	}
