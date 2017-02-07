@@ -12,7 +12,7 @@ var (
 
 func _testAddAction(name string, from string, errExpected error) {
 	Convey(name, func() {
-		water, err := NewFsm(degres, "0")
+		water, err := New(degres, "0")
 		So(err, ShouldEqual, nil)
 		err = water.AddAction(name, from, func() {})
 		if err == nil {
@@ -39,7 +39,7 @@ func TestAddAction(t *testing.T) {
 func _testHandleAction(name string, current string, action string, errExpected error) {
 	Convey(name, func() {
 		var err error
-		water, err := NewFsm(degres, current)
+		water, err := New(degres, current)
 		So(err, ShouldEqual, nil)
 		water.AddAction("freeze", "-100", func() {})
 		_, err = water.HandleAction(action)

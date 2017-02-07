@@ -12,7 +12,7 @@ var (
 
 func _testAddTransition(name string, from string, to string, errExpected error) {
 	Convey(name, func() {
-		turnstile, err := NewFsm(positions, "locked")
+		turnstile, err := New(positions, "locked")
 		So(err, ShouldEqual, nil)
 		err = turnstile.AddTransition("new", from, to, func() {})
 		if err == nil {
@@ -40,7 +40,7 @@ func TestAddTransition(t *testing.T) {
 
 func _testHandleTransition(name string, current string, trans string, errExpected error) {
 	Convey(name, func() {
-		turnstile, err := NewFsm(positions, current)
+		turnstile, err := New(positions, current)
 		So(err, ShouldEqual, nil)
 		err = turnstile.AddTransition("unlock", "locked", "unlocked", func() {})
 		So(err, ShouldEqual, nil)

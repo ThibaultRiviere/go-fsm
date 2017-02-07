@@ -29,7 +29,7 @@ func main() {
     states := []string{"locked", "close", "open"}
     defaultState := "close"
 
-    door, err := fsm.NewFsm(states, defaultState)    
+    door, err := fsm.New(states, defaultState)    
 }
 
 ```
