@@ -1,7 +1,6 @@
 package fsm
 
 import (
-	"errors"
 	. "github.com/smartystreets/goconvey/convey"
 	"testing"
 )
@@ -24,18 +23,6 @@ func _testAddAction(name string, from string, errExpected error) {
 	})
 }
 
-func TestAddAction(t *testing.T) {
-	Convey("Testing addAction to fsm", t, func() {
-		var err error
-
-		err = errors.New("Default state is not part of the states")
-		_testAddAction("with unexisting state", "42", err)
-
-		err = nil
-		_testAddAction("with existing state", "100", err)
-	})
-}
-
 func _testHandleAction(name string, current string, action string, errExpected error) {
 	Convey(name, func() {
 		var err error
@@ -51,17 +38,17 @@ func _testHandleAction(name string, current string, action string, errExpected e
 	})
 }
 
+func TestAddAction(t *testing.T) {
+	Convey("Testing addAction to fsm", t, func() {
+		_testAddAction("with unexisting state", "42", ErrUnknowState)
+		_testAddAction("with existing state", "100", nil)
+	})
+}
+
 func TestHandleAction(t *testing.T) {
 	Convey("Testing HandleAction to fsm", t, func() {
-		var err error
-
-		err = errors.New("Event doesn't exist")
-		_testHandleAction("with unexisting action", "0", "unexist", err)
-
-		err = errors.New("Bad state refuse event")
-		_testHandleAction("with action and bad state", "0", "freeze", err)
-
-		err = nil
-		_testHandleAction("with action and good state", "-100", "freeze", err)
+		_testHandleAction("with unexisting action", "0", "unexist", ErrUnknowAction)
+		_testHandleAction("with action and bad state", "0", "freeze", ErrBadState)
+		_testHandleAction("with action and good state", "-100", "freeze", nil)
 	})
 }

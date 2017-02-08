@@ -1,9 +1,5 @@
 package fsm
 
-import (
-	"errors"
-)
-
 // action define an action on the state machine
 // It will check the current state of the fsm and see if
 // the action is allowed.
@@ -17,7 +13,7 @@ type action struct {
 // AddAction will add to the fsm a new action.
 func (fsm *Fsm) AddAction(name string, from string, handler func()) error {
 	if isValideState(fsm.states, from) == false {
-		return errors.New("Default state is not part of the states")
+		return ErrUnknowState
 	}
 	action := action{from, handler}
 	fsm.actions[name] = action
@@ -29,11 +25,11 @@ func (fsm *Fsm) AddAction(name string, from string, handler func()) error {
 func (fsm *Fsm) HandleAction(name string) (string, error) {
 	action, exist := fsm.actions[name]
 	if exist == false {
-		return fsm.current, errors.New("Event doesn't exist")
+		return fsm.current, ErrUnknowAction
 	}
 	if action.from == fsm.current {
 		action.handler()
 		return fsm.current, nil
 	}
-	return fsm.current, errors.New("Bad state refuse event")
+	return fsm.current, ErrBadState
 }

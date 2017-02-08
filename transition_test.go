@@ -1,7 +1,6 @@
 package fsm
 
 import (
-	"errors"
 	. "github.com/smartystreets/goconvey/convey"
 	"testing"
 )
@@ -23,21 +22,6 @@ func _testAddTransition(name string, from string, to string, errExpected error) 
 	})
 }
 
-func TestAddTransition(t *testing.T) {
-	Convey("Testing AddTransition to fsm", t, func() {
-		var err error
-
-		err = errors.New("State from is not part of the states")
-		_testAddTransition("With unexisting from", "unexist", "locked", err)
-
-		err = errors.New("State to is not part of the states")
-		_testAddTransition("With unexisting to", "locked", "unexist", err)
-
-		err = nil
-		_testAddTransition("With good values", "locked", "unlocked", err)
-	})
-}
-
 func _testHandleTransition(name string, current string, trans string, errExpected error) {
 	Convey(name, func() {
 		turnstile, err := New(positions, current)
@@ -55,17 +39,18 @@ func _testHandleTransition(name string, current string, trans string, errExpecte
 	})
 }
 
+func TestAddTransition(t *testing.T) {
+	Convey("Testing AddTransition to fsm", t, func() {
+		_testAddTransition("With unexisting from", "unexist", "locked", ErrUnknowState)
+		_testAddTransition("With unexisting to", "locked", "unexist", ErrUnknowState)
+		_testAddTransition("With good values", "locked", "unlocked", nil)
+	})
+}
+
 func TestHandleTransition(t *testing.T) {
 	Convey("Testing HandleTransition", t, func() {
-		var err error
-
-		err = errors.New("Event doesn't exist")
-		_testHandleTransition("With unexisting event", "locked", "unexist", err)
-
-		err = errors.New("Bad state refuse event")
-		_testHandleTransition("with bad state", "unlocked", "unlock", err)
-
-		err = nil
-		_testHandleTransition("with good state", "locked", "unlock", err)
+		_testHandleTransition("With unexisting event", "locked", "unexist", ErrUnknowTransition)
+		_testHandleTransition("with bad state", "unlocked", "unlock", ErrBadState)
+		_testHandleTransition("with good state", "locked", "unlock", nil)
 	})
 }
