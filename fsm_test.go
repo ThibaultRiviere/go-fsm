@@ -1,7 +1,6 @@
 package fsm
 
 import (
-	"errors"
 	. "github.com/smartystreets/goconvey/convey"
 	"testing"
 )
@@ -21,23 +20,18 @@ func _testFsm(name string, states []string, current string, errExpected error) {
 	})
 }
 
-func TestFsm(t *testing.T) {
-	Convey("Testing initialization of the fsm", t, func() {
-		var err error
-
-		err = errors.New("Default state is not part of the states")
-		_testFsm("with unexisting default", states, "d", err)
-
-		err = nil
-		_testFsm("with valid state", states, states[1], err)
-	})
-}
-
 func _testGetState(name string, states []string, current string) {
 	Convey(name, func() {
 		fsm, err := New(states, current)
 		So(err, ShouldEqual, nil)
 		So(fsm.GetState(), ShouldEqual, current)
+	})
+}
+
+func TestFsm(t *testing.T) {
+	Convey("Testing initialization of the fsm", t, func() {
+		_testFsm("with unexisting default", states, "d", ErrUnknowState)
+		_testFsm("with valid state", states, states[1], nil)
 	})
 }
 

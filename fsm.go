@@ -1,10 +1,6 @@
 // Package fsm is a library tool for finite state nachine
 package fsm
 
-import (
-	"errors"
-)
-
 // Fsm is a finitate state machine
 // Fsm define the possible transitions, actions, the states possible and the current state
 type Fsm struct {
@@ -32,7 +28,7 @@ func isValideState(states []string, state string) bool {
 // Check if the current state is part of the possible states
 func New(states []string, current string) (*Fsm, error) {
 	if isValideState(states, current) == false {
-		return nil, errors.New("Default state is not part of the states")
+		return nil, ErrUnknowState
 	}
 	transitions := make(map[string]transition)
 	actions := make(map[string]action)

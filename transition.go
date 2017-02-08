@@ -1,9 +1,5 @@
 package fsm
 
-import (
-	"errors"
-)
-
 // transition is to go from a state to an other
 // It will check the current state to ensure that the transition is
 // allowed execute the handler and then change the current state to
@@ -20,11 +16,11 @@ type transition struct {
 // AddTransition will add to the fsm a new transition.
 func (fsm *Fsm) AddTransition(name string, from string, to string, handler func()) error {
 	if isValideState(fsm.states, from) == false {
-		return errors.New("State from is not part of the states")
+		return ErrUnknowState
 	}
 
 	if isValideState(fsm.states, to) == false {
-		return errors.New("State to is not part of the states")
+		return ErrUnknowState
 	}
 
 	transition := transition{from, to, handler}
@@ -38,12 +34,12 @@ func (fsm *Fsm) AddTransition(name string, from string, to string, handler func(
 func (fsm *Fsm) HandleTransition(name string) (string, error) {
 	transition, exist := fsm.transitions[name]
 	if exist == false {
-		return fsm.current, errors.New("Event doesn't exist")
+		return fsm.current, ErrUnknowTransition
 	}
 	if transition.from == fsm.current {
 		transition.handler()
 		fsm.current = transition.to
 		return fsm.current, nil
 	}
-	return fsm.current, errors.New("Bad state refuse event")
+	return fsm.current, ErrBadState
 }
