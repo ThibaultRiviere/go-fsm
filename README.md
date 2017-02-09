@@ -79,6 +79,36 @@ In case where the current state is not lock then the transition ```unlock door``
 ```
 If the current state of the door is ```open```, then it's possible to go through the door and enter in the room.
 
+
+### Errors 
+
+- ```ErrUnknowState``` when using an undefined state
+```go 
+fsm, err := fsm.New([]string{"a", "b"}, "b")
+fsm.addAction("oups", "c")
+```
+
+- ```ErrUnknowAction``` when using an undefined action 
+```go
+fsm, err := fsm.New([]string{"a", "b"}, "b")
+fsm.HandleAction("Action is not define")
+```
+
+- ```ErrUnknowTransition``` when using an undefined transition
+```go
+fsm, err := fsm.New([]string{"a", "b"}, "b")
+fsm.HandleTransition("Transition is not define")
+```
+
+- ```ErrBadState``` current state is not the state needed for the action/transition
+```go
+fsm, err := fsm.New([]string{"a", "b"}, "b")
+fsm.AddAction("test", "a", func() {
+   fmt.Println("this is an action")
+})
+fsm.HandleAction("test")
+```
+
 ## License
 
 MIT
