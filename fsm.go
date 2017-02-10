@@ -1,9 +1,13 @@
 // Package fsm is a library tool for finite state nachine
 package fsm
 
+import "sync"
+
 // Fsm is a finitate state machine
 // Fsm define the possible transitions, actions, the states possible and the current state
 type Fsm struct {
+	// mutex for handle goroutines access
+	mutex *sync.Mutex
 	// current state of the fsm
 	current string
 	// states possible for the fsm
@@ -30,9 +34,10 @@ func New(states []string, current string) (*Fsm, error) {
 	if isValideState(states, current) == false {
 		return nil, ErrUnknowState
 	}
+	mutex := &sync.Mutex{}
 	transitions := make(map[string]transition)
 	actions := make(map[string]action)
-	return &Fsm{current, states, transitions, actions}, nil
+	return &Fsm{mutex, current, states, transitions, actions}, nil
 }
 
 // GetState return the current state of the fsm

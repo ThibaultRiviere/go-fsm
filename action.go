@@ -27,9 +27,12 @@ func (fsm *Fsm) HandleAction(name string) (string, error) {
 	if exist == false {
 		return fsm.current, ErrUnknowAction
 	}
+	fsm.mutex.Lock()
 	if action.from == fsm.current {
 		action.handler()
+		fsm.mutex.Unlock()
 		return fsm.current, nil
 	}
+	fsm.mutex.Unlock()
 	return fsm.current, ErrBadState
 }
