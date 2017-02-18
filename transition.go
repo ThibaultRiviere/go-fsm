@@ -36,10 +36,13 @@ func (fsm *Fsm) HandleTransition(name string) (string, error) {
 	if exist == false {
 		return fsm.current, ErrUnknowTransition
 	}
+	fsm.mutex.Lock()
 	if transition.from == fsm.current {
 		transition.handler()
 		fsm.current = transition.to
+		fsm.mutex.Unlock()
 		return fsm.current, nil
 	}
+	fsm.mutex.Unlock()
 	return fsm.current, ErrBadState
 }

@@ -54,3 +54,43 @@ func TestHandleTransition(t *testing.T) {
 		_testHandleTransition("with good state", "locked", "unlock", nil)
 	})
 }
+
+func _testConccurrentTransition(turnstile *Fsm, transition string, ret chan error) {
+	_, err := turnstile.HandleTransition(transition)
+	ret <- err
+}
+
+func _testHandleConcurrentsTransitions(name string, nbConcurrents int) {
+	Convey(name, func() {
+		turnstile, err := New(positions, "locked")
+		So(err, ShouldEqual, nil)
+		err = turnstile.AddTransition("unlock", "locked", "unlocked", func() {})
+		So(err, ShouldEqual, nil)
+
+		rets := make(chan error, nbConcurrents)
+		for i := 0; i < nbConcurrents; i++ {
+			go _testConccurrentTransition(turnstile, "unlock", rets)
+		}
+		state := "locked"
+		for i := 0; i < nbConcurrents; i++ {
+			if ret := <-rets; ret != nil {
+				So(ret, ShouldEqual, ErrBadState)
+			} else {
+				// ensure that only one goroutine is authorized
+				So(state, ShouldEqual, "locked")
+				state = "unlocked"
+			}
+		}
+	})
+}
+
+func TestTransitionGoroutines(t *testing.T) {
+	Convey("Testing concurrentes transitions", t, func() {
+		_testHandleConcurrentsTransitions("with 2 concurrents", 2)
+		_testHandleConcurrentsTransitions("with 3 concurrents", 3)
+		_testHandleConcurrentsTransitions("with 5 concurrents", 5)
+		_testHandleConcurrentsTransitions("with 10 concurrents", 10)
+		_testHandleConcurrentsTransitions("with 15 concurrents", 15)
+		_testHandleConcurrentsTransitions("with 25 concurrents", 25)
+	})
+}

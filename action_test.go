@@ -38,6 +38,31 @@ func _testHandleAction(name string, current string, action string, errExpected e
 	})
 }
 
+func _testHandleConcurrentsAction(water *Fsm, action string, ret chan error) {
+	_, err := water.HandleAction(action)
+	ret <- err
+}
+
+func _testMutex(name string, concurrents int) {
+	Convey(name, func() {
+		isBoil := false
+		water, err := New(degres, "0")
+		So(err, ShouldEqual, nil)
+		water.AddTransition("boil", "0", "100", func() { isBoil = true })
+		water.AddAction("evaporate", "100", func() {})
+		rets := make(chan error, concurrents)
+		for i := 0; i < concurrents; i++ {
+			go _testHandleConcurrentsAction(water, "evaporate", rets)
+		}
+		go water.HandleTransition("boil")
+		for i := 0; i < concurrents; i++ {
+			if isBoil == true {
+				So(err, ShouldEqual, ErrBadState)
+			}
+		}
+	})
+}
+
 func TestAddAction(t *testing.T) {
 	Convey("Testing addAction to fsm", t, func() {
 		_testAddAction("with unexisting state", "42", ErrUnknowState)
@@ -50,5 +75,11 @@ func TestHandleAction(t *testing.T) {
 		_testHandleAction("with unexisting action", "0", "unexist", ErrUnknowAction)
 		_testHandleAction("with action and bad state", "0", "freeze", ErrBadState)
 		_testHandleAction("with action and good state", "-100", "freeze", nil)
+	})
+}
+
+func TestMutexAction(t *testing.T) {
+	Convey("Tesing Muxtex to fsm for action", t, func() {
+		_testMutex("x", 5)
 	})
 }
