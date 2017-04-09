@@ -15,8 +15,7 @@ func (fsm *Fsm) AddAction(name string, from string, handler func()) error {
 	if isValideState(fsm.states, from) == false {
 		return ErrUnknowState
 	}
-	action := action{from, handler}
-	fsm.actions[name] = action
+	fsm.actions[name] = action{from, handler}
 	return nil
 }
 
@@ -27,12 +26,13 @@ func (fsm *Fsm) HandleAction(name string) (string, error) {
 	if exist == false {
 		return fsm.current, ErrUnknowAction
 	}
-	fsm.mutex.Lock()
+
+	fsm.mutex.RLock()
+	defer fsm.mutex.RUnlock()
+
 	if action.from == fsm.current {
 		action.handler()
-		fsm.mutex.Unlock()
 		return fsm.current, nil
 	}
-	fsm.mutex.Unlock()
 	return fsm.current, ErrBadState
 }

@@ -23,8 +23,7 @@ func (fsm *Fsm) AddTransition(name string, from string, to string, handler func(
 		return ErrUnknowState
 	}
 
-	transition := transition{from, to, handler}
-	fsm.transitions[name] = transition
+	fsm.transitions[name] = transition{from, to, handler}
 	return nil
 }
 
@@ -36,13 +35,14 @@ func (fsm *Fsm) HandleTransition(name string) (string, error) {
 	if exist == false {
 		return fsm.current, ErrUnknowTransition
 	}
+
 	fsm.mutex.Lock()
+	defer fsm.mutex.Unlock()
+
 	if transition.from == fsm.current {
 		transition.handler()
 		fsm.current = transition.to
-		fsm.mutex.Unlock()
 		return fsm.current, nil
 	}
-	fsm.mutex.Unlock()
 	return fsm.current, ErrBadState
 }
