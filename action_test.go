@@ -49,14 +49,19 @@ func _testMutex(name string, concurrents int) {
 		water, err := New(degres, "0")
 		So(err, ShouldEqual, nil)
 		water.AddTransition("boil", "0", "100", func() { isBoil = true })
-		water.AddAction("evaporate", "100", func() {})
+		water.AddAction("evaporate", "100", func() {
+			if isBoil == false {
+				panic("bad state something wrong here")
+			}
+		})
 		rets := make(chan error, concurrents)
 		for i := 0; i < concurrents; i++ {
 			go _testHandleConcurrentsAction(water, "evaporate", rets)
 		}
 		go water.HandleTransition("boil")
 		for i := 0; i < concurrents; i++ {
-			if isBoil == true {
+			err = <-rets
+			if err != nil {
 				So(err, ShouldEqual, ErrBadState)
 			}
 		}
@@ -80,6 +85,10 @@ func TestHandleAction(t *testing.T) {
 
 func TestMutexAction(t *testing.T) {
 	Convey("Tesing Muxtex to fsm for action", t, func() {
-		_testMutex("x", 5)
+		_testMutex("with 2 concurrences", 2)
+		_testMutex("with 5 concurrences", 5)
+		_testMutex("with 10 concurrences", 10)
+		_testMutex("with 15 concurrences", 15)
+		_testMutex("with 25 concurrences", 25)
 	})
 }
